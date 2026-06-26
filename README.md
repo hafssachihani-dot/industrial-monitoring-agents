@@ -1,3 +1,12 @@
+---
+title: Industrial Monitoring Agents
+emoji: 🏭
+colorFrom: blue
+colorTo: cyan
+sdk: docker
+app_port: 7860
+---
+
 # Industrial Monitoring Agents
 
 Mini-projet pédagogique pour le use case :
