@@ -1,0 +1,10 @@
+services:
+  industrial-monitoring-agents:
+    build: .
+    container_name: industrial-monitoring-agents
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    restart: unless-stopped
+
