@@ -11,6 +11,7 @@ from __future__ import annotations
 from typing import Any
 
 from src.utils.openrouter_client import openrouter_client
+from src.utils.slack import send_slack_alert
 
 
 EMERGENCY_PROMPT = """
@@ -54,15 +55,22 @@ class EmergencyAgent:
             context=context,
         )
 
-        # 5. On retourne une réponse simple pour l'API et le dashboard.
+        # 5. Si Slack est activé, on envoie une alerte.
+        slack_result = send_slack_alert(
+            f"🚨 Alerte critique - {machine_id}\n"
+            f"Raisons: {', '.join(reasons)}\n\n"
+            f"{answer}"
+        )
+
+        # 6. On retourne une réponse simple pour l'API et le dashboard.
         return {
             "agent": "EmergencyAgent",
             "severity": "CRITICAL",
             "message": f"Arrêt immédiat recommandé pour {machine_id}.",
             "reasons": reasons,
             "llm_advice": answer,
+            "slack": slack_result,
         }
 
 
 emergency_agent = EmergencyAgent()
-

@@ -120,6 +120,32 @@ uvicorn src.main:app --reload
 
 Attention : ne mets jamais ta vraie clé API dans GitHub.
 
+## Activer les alertes Slack
+
+Les alertes Slack sont envoyées seulement pour les cas `CRITICAL`.
+
+Créer un Slack Incoming Webhook, puis configurer :
+
+```env
+SLACK_ALERTS_ENABLED=true
+SLACK_WEBHOOK_URL=ton_webhook_slack
+```
+
+Sur Hugging Face Spaces :
+
+```text
+Settings -> Variables and secrets
+```
+
+Ajouter :
+
+```text
+SLACK_ALERTS_ENABLED = true
+SLACK_WEBHOOK_URL = ton_webhook_slack
+```
+
+Important : `SLACK_WEBHOOK_URL` est un secret. Ne jamais le mettre dans GitHub.
+
 ## Tester avec curl
 
 Cas normal :
