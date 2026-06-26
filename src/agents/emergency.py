@@ -1,4 +1,10 @@
-"""Agent d'urgence : route critique."""
+"""Agent d'urgence : route critique.
+
+Version simple pour débutant :
+- l'agent prépare un prompt ;
+- il appelle le LLM ;
+- il retourne une réponse simple.
+"""
 
 from __future__ import annotations
 
@@ -10,20 +16,12 @@ from src.utils.openrouter_client import openrouter_client
 EMERGENCY_PROMPT = """
 Tu es EmergencyAgent, un agent d'urgence pour la maintenance industrielle.
 
-Route reçue : CRITICAL.
-Une ou plusieurs valeurs dépassent les seuils de sécurité.
+La machine est en état CRITICAL.
 
-Mission :
-- répondre en français ;
-- être direct et exploitable par un technicien ;
-- prioriser la sécurité ;
-- ne pas afficher de données sensibles ;
-- proposer une action immédiate.
-
-Format obligatoire :
-Sécurité : une action immédiate.
-Diagnostic : la cause probable.
-Solution : les vérifications et corrections avant redémarrage.
+Réponds en français avec ce format :
+Sécurité : action immédiate.
+Diagnostic : cause probable.
+Solution : action à faire avant redémarrage.
 
 Contexte machine :
 {context}
@@ -31,42 +29,40 @@ Contexte machine :
 
 
 class EmergencyAgent:
-    """Gère sécurité, alerte et rapport incident."""
+    """Agent simple pour les cas critiques."""
 
     def analyze(self, telemetry: dict[str, Any], reasons: list[str]) -> dict[str, Any]:
+        """Analyse un cas critique."""
+
+        # 1. On récupère l'identifiant de la machine.
         machine_id = telemetry["machine_id"]
+
+        # 2. On prépare le contexte à envoyer au prompt.
         context = {
-            "route": "CRITICAL",
             "machine_id": machine_id,
+            "route": "CRITICAL",
             "telemetry": telemetry,
             "reasons": reasons,
         }
+
+        # 3. On insère le contexte dans le prompt.
         prompt = EMERGENCY_PROMPT.replace("{context}", str(context))
-        llm_advice = openrouter_client.generate_short_advice(
+
+        # 4. On appelle le LLM.
+        answer = openrouter_client.generate_short_advice(
             prompt=prompt,
             context=context,
         )
 
-        report = {
+        # 5. On retourne une réponse simple pour l'API et le dashboard.
+        return {
             "agent": "EmergencyAgent",
             "severity": "CRITICAL",
             "message": f"Arrêt immédiat recommandé pour {machine_id}.",
             "reasons": reasons,
-            "llm_advice": llm_advice,
-            "safety_actions": [
-                "Arrêter la machine.",
-                "Consigner l'équipement.",
-                "Sécuriser la zone.",
-                "Prévenir le responsable maintenance.",
-            ],
-            "technical_checks": [
-                "Contrôler roulement/palier.",
-                "Vérifier l'alignement.",
-                "Vérifier lubrification et ventilation.",
-            ],
+            "llm_advice": answer,
         }
-
-        return report
 
 
 emergency_agent = EmergencyAgent()
+
