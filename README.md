@@ -2,7 +2,7 @@
 title: Industrial Monitoring Agents
 emoji: 🏭
 colorFrom: blue
-colorTo: cyan
+colorTo: green
 sdk: docker
 app_port: 7860
 ---
